@@ -25,7 +25,7 @@ RETI
 
 ; store number of interrupts count in mem[64], i.e, address 01000000b
 updateInterruptCount:
-PUSH R0				  ; using R2 and R0 internally, so PUSH stack and POP before RET`
+PUSH R0				  ; using R2 and R0 internally, so PUSH stack and POP before RET
 PUSH R2
  INVBSFR SFR5, 0	  ; toggle LED(0) on each interrupt
  SETBR R0, 6          ; 64d (data memory address)
@@ -137,7 +137,7 @@ MOVBAMEM @R3, R2      ; write paddle value in data mem
 RET
 
 checkIfLineIsFilled:
-SETBR R1, 2  ; set R1 as the bottom address
+SETBR R1, 2  ; set R1 as the bottom address (0000000000001100)
 SETBR R1, 3
 PUSH R5
 PUSH R2
@@ -154,8 +154,8 @@ checkMem:
  JZ R6, fin
  INC R1, R1
  JNZ R5, checkMem 
-moveMemDown:     ; delete whats in past mem by moving all mem down by one
- ; R5 is now 0, R1 has mem location of one above the full row, SFR03 has location of full row, R6 unkown, R2 has FFFF
+moveMemDown:     ; delete what's in past mem by moving all mem down by one
+ ; R5 is now 0, R1 is mem location of one above the full row, SFR03 is location of full row, R6 unkown, R2 is FFFF
  MOVSFRR R5, SFR10
  MOVAMEMR R6, @R1 ; get what is in mem one location above the full row
  MOVBAMEM @R5, R6 ; put what was above full row in full row
