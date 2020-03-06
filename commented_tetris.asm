@@ -1,6 +1,6 @@
-3; Single Cycle Computer (SCC) 
+; Single Cycle Computer (SCC) 
 ; tetris videogame
-; Uses timer interrup for 1 second delay
+; Uses timer interrupt for 1 second delay
 ;
 ; Created by Robert Hynes and Caireann Kennedy, National University of Ireland, Galway
 ; Creation date: Mar 2020
@@ -89,14 +89,14 @@ RET
 movePaddleDown:
 XOR R5, R5, R5
 SETBR R5, 2
-SETBR R5, 3     ; set R5 to value Ch to use as a mask so it will stop at the bottom
+SETBR R5, 3     ; set R5 to value 000Cxh to use as a mask so it will stop at the bottom
 XOR R5, R5, R3
 JZ R5, stop
 XOR R5, R5, R5
 
-MOVAMEMR R4, @R3 ; save current row shape and position
+MOVAMEMR R4, @R3 ; save current paddle shape and position
 MOVRSFR SFR6, R3 
-DEC R3, R3       ; move row down and save new psoition
+DEC R3, R3       ; move paddle down and save new psoition
 MOVAMEMR R5, @R3 
 MOVSFRR R1, SFR11 
 XOR R4, R1, R4
@@ -107,16 +107,16 @@ MOVSFRR R3, SFR6
 MOVSFRR R1, SFR11
 MOVBAMEM @R3, R1 
 DEC R3, R3
-OR R4, R5, R4    ; if no collision clear past row and add old & new rows
+OR R4, R5, R4    ; if no collision clear previous row and movie paddle to the new row
 MOVRSFR SFR11, R5 
 MOVBAMEM @R3, R4 
 
 JNZ R3, jump     
-stop:            ; Once the row stops check if any lines are full, if any reached the top and then create a new row if not at top
+stop:            ; Once the row stops, check if any lines are full or if the top row has anything in it now, meaning the player has lost the game
  XOR R1, R1, R1
  CALL checkIfLineIsFilled
  CALL checkIfAtTop
- CALL initialisePaddleInMemAddr10  
+ CALL initialisePaddleInMemAddr10  ; then create a new row if the game is not over
 jump:
 RET
 
@@ -125,7 +125,7 @@ RET
 initialisePaddleInMemAddr10:
 PUSH R5
 PUSH R6
-MOVRSFR  SFR11, R1    ; SFR11 held past positions but now is new row so can clear
+MOVRSFR  SFR11, R1    ; SFR11 held past positions but now is new row so it can be cleared
 MOVSFRR R1, SFR7      ; get random number and mask out the last three bits
 ADDI R5, R5, 7         
 AND R1, R5, R1
