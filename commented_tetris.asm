@@ -20,17 +20,9 @@ CALL movePaddleDown
 CALL checkDirection
 RETI  
 
-; store number of interrupts count in mem[64], i.e, address 01000000b
+; toggle LED(0) on each interrupt
 updateInterruptCount:
-PUSH R0				  
-PUSH R2
- INVBSFR SFR5, 0	  
- SETBR R0, 6          
- MOVAMEMR R2, @R0     
- INC R2, R2
- MOVBAMEM @R0, R2     
-POP R2
-POP R0
+ INVBSFR SFR5, 0	   
 RET
 
 ; clear mem[64d] 
