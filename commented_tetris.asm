@@ -6,8 +6,7 @@
 ; Creation date: Mar 2020
 ;
 ; ASSEMBLY INSTRUCTION    ; DECRIPTION 
-main:                     ; main program label
-CALL clearNumIntCount	 
+main:                     ; main program label	 
 CALL initialisePaddleInMemAddr10
 CALL Cfg_DownTimer_T80ns_Interrupt
 SETBSFR SFR0, 4 
@@ -23,13 +22,6 @@ RETI
 ; toggle LED(0) on each interrupt
 updateInterruptCount:
  INVBSFR SFR5, 0	   
-RET
-
-; clear mem[64d] 
-clearNumIntCount: 	 
- XOR R2, R2, R2          
- SETBR R0, 6 		     
- MOVBAMEM @R0, R2        
 RET
 
 ; configure (but don't start) 1 second reloadable, down timer, and timer interrupt control  
