@@ -105,30 +105,30 @@ RET
 movePaddleDown:
 XOR R5, R5, R5
 SETBR R5, 2
-SETBR R5, 3
+SETBR R5, 3     ; set R5 to value Ch to use as a mask so it will stop at the bottom
 XOR R5, R5, R3
 JZ R5, stop
 XOR R5, R5, R5
 
-MOVAMEMR R4, @R3 
+MOVAMEMR R4, @R3 ; save current row shape and position
 MOVRSFR SFR6, R3 
-DEC R3, R3       
+DEC R3, R3       ; move row down and save new psoition
 MOVAMEMR R5, @R3 
 MOVSFRR R1, SFR11 
 XOR R4, R1, R4
-AND R1, R4, R5   
+AND R1, R4, R5   ; check if there will be a collision and stop if there is
 JNZ R1, stop     
 
 MOVSFRR R3, SFR6 
 MOVSFRR R1, SFR11
 MOVBAMEM @R3, R1 
 DEC R3, R3
-OR R4, R5, R4    
+OR R4, R5, R4    ; if no collision clear past row and add old & new rows
 MOVRSFR SFR11, R5 
 MOVBAMEM @R3, R4 
 
 JNZ R3, jump     
-stop:
+stop:            ; Once the row stops check if any lines are full, if any reached the top and then create a new row if not at top
  XOR R1, R1, R1
  CALL checkIfLineIsFilled
  CALL checkIfAtTop
@@ -141,12 +141,12 @@ RET
 initialisePaddleInMemAddr10:
 PUSH R5
 PUSH R6
-MOVRSFR  SFR11, R1     
-MOVSFRR R1, SFR7
+MOVRSFR  SFR11, R1    ; SFR11 held past positions but now is new row so can clear
+MOVSFRR R1, SFR7      ; get random number and mask out the last three bits
 ADDI R5, R5, 7         
 AND R1, R5, R1
 
-XOR R5, R5, R5         
+XOR R5, R5, R5         ; check the value of the last three bits from 0-7 and set row length based on value
 XOR R6, R5, R1
 JZ R6, setPaddle1
 
@@ -206,7 +206,7 @@ setPaddle7:
  MOVDPTR 07Fh
  MOVSFRR  R2, SFR15 
  JZ R6, assignPaddleValue
-assignPaddleValue:
+assignPaddleValue:         ; once length is set assign the row to Mem[31]
 MOVDPTR  1fh          
 MOVSFRR  R3, SFR15   
 MOVBAMEM @R3, R2      
@@ -225,17 +225,17 @@ PUSH R5
 PUSH R2
 PUSH R6
 XOR R2, R2, R2 
-INV R2, R2     
-checkMem:
- MOVSFRR  R6, SFR15
+INV R2, R2            ; set R2 as mask for a full row
+checkMem:             ; check if current mem location is full
+ MOVSFRR  R6, SFR15   
  MOVAMEMR R5, @R1 
  XOR R5, R2, R5   
  MOVRSFR SFR10, R1 
- XOR R6, R1, R6
+ XOR R6, R1, R6       ; check if at the top before checking if next mem location is full
  JZ R6, fin
  INC R1, R1
- JNZ R5, checkMem 
-moveMemDown:
+ JNZ R5, checkMem     ; if not at top increase current mem location and check again if full
+moveMemDown:          ; if a row is full move mem locations above that line down one position
  MOVSFRR R5, SFR10 
  MOVAMEMR R6, @R1 
  MOVBAMEM @R5, R6 
@@ -246,7 +246,7 @@ moveMemDown:
  JNZ R6, moveMemDown
 MOVSFRR R5, SFR4
 INC R5, R5
-MOVRSFR SFR4, R5
+MOVRSFR SFR4, R5     ; increase the score
 fin:
 POP R6
 POP R2
@@ -266,7 +266,7 @@ MOVSFRR  R6, SFR15
 MOVAMEMR R5, @R6
 JZ R5, notAtTop
 
-XOR R5, R5, R5
+XOR R5, R5, R5    ; if at top clear top row and move down in mem locations and set LEDs to print END
 MOVBAMEM @R6, R5
 
 DEC R6, R6
