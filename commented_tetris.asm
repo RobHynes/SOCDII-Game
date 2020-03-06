@@ -7,7 +7,7 @@
 ;
 ; ASSEMBLY INSTRUCTION    ; DECRIPTION 
 main:                     ; main program label	 
-CALL initialisePaddleInMemAddr10
+CALL initialisePaddle
 CALL Cfg_DownTimer_T80ns_Interrupt
 SETBSFR SFR0, 4 
 END
@@ -116,13 +116,13 @@ stop:            ; Once the row stops, check if any lines are full or if the top
  XOR R1, R1, R1
  CALL checkIfLineIsFilled
  CALL checkIfAtTop
- CALL initialisePaddleInMemAddr10  ; then create a new row if the game is not over
+ CALL initialisePaddle  ; then create a new row if the game is not over
 jump:
 RET
 
 ; initialise a random sized paddle in data mem(31). Paddle can be 1 to 7 bits long
 ; paddle size is determined using the first 3 bits of the random number generated in SFR7 
-initialisePaddleInMemAddr10:
+initialisePaddle:
 PUSH R5
 PUSH R6
 MOVRSFR  SFR11, R1    ; SFR11 held past positions but now is new row so it can be cleared
