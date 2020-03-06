@@ -81,7 +81,7 @@ RET
 ; space below the paddle (the bits of the next row of memory that the 
 ; paddle is about to move into)
 ; if there is something below it, the paddle stops in the current memory 
-; row instead of going to the next row and initialisePaddleInMemAddr10 
+; row instead of going to the next row and initialisePaddle 
 ; is called to create a new piece at the top of the screen
 ; also if the paddle stops call checkIfLineIsFilled, as this will need 
 ; to be deleted and the score increased
