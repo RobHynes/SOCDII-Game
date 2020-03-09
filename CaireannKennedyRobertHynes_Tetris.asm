@@ -309,17 +309,19 @@ RET
 ; if the paddle has reached the left side of the screen, do not move any further left
 rotatePaddleLeft:
  PUSH R1
- XOR R1, R1, R1 
- SETBR R1, 15   
- MOVAMEMR R6, @R3    
+ PUSH R2
+ XOR R1, R1, R1
+ SETBR R1, 15  
+ MOVSFRR R2, SFR11  
+ MOVAMEMR R6, @R3
+ XOR R6, R2, R6    
  AND R1, R1, R6      
  JNZ R1, dontMoveLeft
- MOVSFRR R1, SFR11 
- XOR R6, R1, R6
- ROTL     R6, 1	
- OR R6, R1, R6	  
+ ROTL R6, 1	
+ OR R6, R2, R6	  
  MOVBAMEM @R3, R6     
  dontMoveLeft:
+ POP R2
  POP R1
 RET
 
@@ -327,16 +329,18 @@ RET
 ; if the paddle has reached the right side of the screen, do not move any further right
 rotatePaddleRight:  
  PUSH R1
+ PUSH R2
  XOR R1, R1, R1 
- SETBR R1, 0   
- MOVAMEMR R6, @R3    
+ SETBR R1, 0 
+ MOVSFRR R2, SFR11   
+ MOVAMEMR R6, @R3
+ XOR R6, R2, R6    
  AND R1, R1, R6      
  JNZ R1, dontMoveRight
- MOVSFRR R1, SFR11 
- XOR R6, R1, R6
  ROTR     R6, 1	
- OR R6, R1, R6	  	  
+ OR R6, R2, R6	  	  
  MOVBAMEM @R3, R6     
  dontMoveRight:
+ POP R2
  POP R1
 RET
