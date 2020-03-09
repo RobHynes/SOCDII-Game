@@ -64,6 +64,7 @@ checkDirection:
  SETBR R0, 3
  AND R0, R0, R4
  JNZ R0, left
+ JZ R0, skip
  right:
   CALL rotatePaddleRight
   JNZ R0, skip
@@ -312,8 +313,11 @@ rotatePaddleLeft:
  SETBR R1, 15   
  MOVAMEMR R6, @R3    
  AND R1, R1, R6      
- JNZ R1, dontMoveLeft 
- ROTL     R6, 1		  
+ JNZ R1, dontMoveLeft
+ MOVSFRR R1, SFR11 
+ XOR R6, R1, R6
+ ROTL     R6, 1	
+ OR R6, R1, R6	  
  MOVBAMEM @R3, R6     
  dontMoveLeft:
  POP R1
@@ -328,7 +332,10 @@ rotatePaddleRight:
  MOVAMEMR R6, @R3    
  AND R1, R1, R6      
  JNZ R1, dontMoveRight
- ROTR     R6, 1		  
+ MOVSFRR R1, SFR11 
+ XOR R6, R1, R6
+ ROTR     R6, 1	
+ OR R6, R1, R6	  	  
  MOVBAMEM @R3, R6     
  dontMoveRight:
  POP R1
